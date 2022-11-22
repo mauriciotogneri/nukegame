@@ -40,8 +40,8 @@ class SplashState extends BaseState {
       await FirebaseAuth.instance.signInAnonymously();
     }
 
-    //Navigation.lobbyScreen();
-    final doc = FirebaseFirestore.instance.collection('matches').doc('bbb');
-    Navigation.matchScreen(doc);
+    Navigation.lobbyScreen();
+    //final doc = FirebaseFirestore.instance.collection('matches').doc('bbb');
+    //Navigation.matchScreen(doc);
   }
 }

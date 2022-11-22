@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:flutter/material.dart';
 import 'package:nukegame/json/json_match.dart';
+import 'package:nukegame/json/json_slot.dart';
 import 'package:nukegame/models/document.dart';
 import 'package:nukegame/services/palette.dart';
 
@@ -35,13 +36,23 @@ class Content extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => Column(
         children: [
-          Expanded(child: BaseMap(state)),
+          Expanded(
+            child: BaseMap(
+              slots: state.enemySlots,
+              callback: null,
+            ),
+          ),
           Container(
             color: Palette.black,
             height: constraints.maxHeight / 10,
             child: MessageBanner(state),
           ),
-          Expanded(child: BaseMap(state)),
+          Expanded(
+            child: BaseMap(
+              slots: state.ownSlots,
+              callback: state.onSlotSelected,
+            ),
+          ),
           Container(
             color: Palette.black,
             height: constraints.maxHeight / 10,
@@ -79,9 +90,13 @@ class MessageBanner extends StatelessWidget {
 }
 
 class BaseMap extends StatelessWidget {
-  final MatchState state;
+  final List<JsonSlot> slots;
+  final Function(JsonSlot)? callback;
 
-  const BaseMap(this.state);
+  const BaseMap({
+    required this.slots,
+    required this.callback,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +177,10 @@ class MatchState extends BaseState {
 
   MatchState(this.matchDocRef);
 
+  List<JsonSlot> get enemySlots => [];
+
+  List<JsonSlot> get ownSlots => [];
+
   @override
   void onLoad() {
     subscription = matchDocRef.snapshots().listen((event) {
@@ -180,5 +199,9 @@ class MatchState extends BaseState {
   void onDestroy() {
     subscription?.cancel();
     timer?.cancel();
+  }
+
+  void onSlotSelected(JsonSlot slot) {
+    print(slot.id);
   }
 }

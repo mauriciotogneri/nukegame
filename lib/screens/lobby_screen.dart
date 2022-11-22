@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nukegame/json/json_match.dart';
+import 'package:nukegame/json/json_slot.dart';
 import 'package:nukegame/models/document.dart';
 import 'package:nukegame/services/navigation.dart';
 import 'package:nukegame/types/lobby_status.dart';
+import 'package:nukegame/types/slot_state.dart';
 import 'package:nukegame/widgets/custom_form_field.dart';
 
 class LobbyScreen extends StatelessWidget {
@@ -109,9 +112,13 @@ class LobbyState extends BaseState {
       status = LobbyStatus.waiting;
       notify();
 
-      final JsonMatch match = JsonMatch(id: matchId, players: [
-        FirebaseAuth.instance.currentUser!.uid,
-      ]);
+      final String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      final JsonMatch match = JsonMatch(
+        id: matchId,
+        players: [userId],
+        slots: _newSlots(from: 1, owner: userId),
+      );
 
       matchDocRef = _docRef(matchId);
 
@@ -142,14 +149,39 @@ class LobbyState extends BaseState {
       notify();
 
       matchDocRef = _docRef(matchId);
+      final String userId = FirebaseAuth.instance.currentUser!.uid;
 
       final DocumentSnapshot snapshot = await matchDocRef!.get();
       final Document document = Document.load(snapshot);
       final JsonMatch match = JsonMatch.fromDocument(document);
-      match.players.add(FirebaseAuth.instance.currentUser!.uid);
+      match.players.add(userId);
+      match.slots.addAll(_newSlots(from: 7, owner: userId));
 
       await matchDocRef?.set(match.toJson());
       Navigation.matchScreen(matchDocRef!);
     }
+  }
+
+  List<JsonSlot> _newSlots({
+    required int from,
+    required String owner,
+  }) {
+    final List<JsonSlot> result = [];
+    final int min = from;
+    final int max = from + 5;
+    final baseSlotId = min + Random().nextInt(max - min);
+
+    for (int i = min; i <= max; i++) {
+      result.add(
+        JsonSlot(
+          id: i.toString(),
+          owner: owner,
+          hidden: true,
+          state: (baseSlotId == i) ? SlotState.base : SlotState.empty,
+        ),
+      );
+    }
+
+    return result;
   }
 }

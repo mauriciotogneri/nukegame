@@ -1,4 +1,5 @@
 enum SlotState {
-  hidden,
-  revealed,
+  empty,
+  base,
+  destroyed,
 }

@@ -15,31 +15,22 @@ class Document {
 
   factory Document.fromMap(Map<String, dynamic> map) => Document._('', map);
 
-  String? getString(String field, [String? defaultValue]) =>
-      _get<String>(field, defaultValue);
+  String? getString(String field, [String? defaultValue]) => _get<String>(field, defaultValue);
 
-  List<dynamic>? getList(String field,
-          [List<dynamic> defaultValue = const []]) =>
-      _get<List<dynamic>>(field, defaultValue);
+  List<dynamic>? getList(String field, [List<dynamic> defaultValue = const []]) => _get<List<dynamic>>(field, defaultValue);
 
-  num? getNumber(String field, [num? defaultValue]) =>
-      _get<num>(field, defaultValue);
+  num? getNumber(String field, [num? defaultValue]) => _get<num>(field, defaultValue);
 
-  bool? getBool(String field, [bool? defaultValue]) =>
-      _get<bool>(field, defaultValue);
+  bool? getBool(String field, [bool? defaultValue]) => _get<bool>(field, defaultValue);
 
-  Document getDocument(String field) =>
-      Document.fromMap(_get<Map<String, dynamic>>(field, {}) ?? {});
+  Document getDocument(String field) => Document.fromMap(_get<Map<String, dynamic>>(field, {}) ?? {});
 
-  Timestamp? getTimestamp(String field, [Timestamp? defaultValue]) =>
-      _get<Timestamp>(field, defaultValue);
+  Timestamp? getTimestamp(String field, [Timestamp? defaultValue]) => _get<Timestamp>(field, defaultValue);
 
   DateTime? getDateTime(String field, [DateTime? defaultValue]) {
     final Timestamp? value = getTimestamp(field, null);
 
-    return (value != null)
-        ? DateTime.fromMillisecondsSinceEpoch(value.millisecondsSinceEpoch)
-        : defaultValue;
+    return (value != null) ? DateTime.fromMillisecondsSinceEpoch(value.millisecondsSinceEpoch) : defaultValue;
   }
 
   bool contains(String field) => _get<dynamic>(field, null) != null;

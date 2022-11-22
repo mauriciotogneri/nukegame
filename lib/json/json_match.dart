@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nukegame/json/json_slot.dart';
 import 'package:nukegame/models/document.dart';
 
 part 'json_match.g.dart';
@@ -8,10 +9,12 @@ part 'json_match.g.dart';
 class JsonMatch {
   final String id;
   final List<String> players;
+  final List<JsonSlot> slots;
 
   const JsonMatch({
     this.id = '',
     this.players = const [],
+    this.slots = const [],
   });
 
   factory JsonMatch.fromDocument(Document document) => JsonMatch(
