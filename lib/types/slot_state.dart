@@ -1,0 +1,4 @@
+enum SlotState {
+  hidden,
+  revealed,
+}
