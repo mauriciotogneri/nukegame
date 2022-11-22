@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nukegame/json/json_match.dart';
+import 'package:nukegame/models/document.dart';
 import 'package:nukegame/services/navigation.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -41,7 +43,10 @@ class SplashState extends BaseState {
     }
 
     //Navigation.lobbyScreen();
-    final doc = FirebaseFirestore.instance.collection('matches').doc('bbb');
-    Navigation.matchScreen(doc);
+    final matchDocRef = FirebaseFirestore.instance.collection('matches').doc('xxx');
+    final snapshot = await matchDocRef.get();
+    final Document document = Document.load(snapshot);
+    final JsonMatch match = JsonMatch.fromDocument(document);
+    Navigation.matchScreen(matchDocRef: matchDocRef, match: match);
   }
 }

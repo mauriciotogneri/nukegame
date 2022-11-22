@@ -135,7 +135,7 @@ class LobbyState extends BaseState {
   void _onMatchDocumentChanged(JsonMatch match) {
     if (match.players.length == 2) {
       subscription?.cancel();
-      Navigation.matchScreen(matchDocRef!);
+      Navigation.matchScreen(matchDocRef: matchDocRef!, match: match);
     }
   }
 
@@ -158,7 +158,7 @@ class LobbyState extends BaseState {
       match.slots.addAll(_newSlots(from: 7, owner: userId));
 
       await matchDocRef?.set(match.toJson());
-      Navigation.matchScreen(matchDocRef!);
+      Navigation.matchScreen(matchDocRef: matchDocRef!, match: match);
     }
   }
 

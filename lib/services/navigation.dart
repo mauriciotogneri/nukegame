@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nukegame/json/json_match.dart';
 import 'package:nukegame/screens/lobby_screen.dart';
 import 'package:nukegame/screens/match_screen.dart';
 import 'package:nukegame/services/initializer.dart';
@@ -21,9 +22,12 @@ class Navigation {
         ),
       );
 
-  static void matchScreen(DocumentReference matchDocRef) => get.routes.pushAlone(
+  static void matchScreen({
+    required DocumentReference matchDocRef,
+    required JsonMatch match,
+  }) => get.routes.pushAlone(
         FadeRoute(
-          MatchScreen.instance(matchDocRef),
+          MatchScreen.instance(matchDocRef, match),
           name: 'match',
         ),
       );

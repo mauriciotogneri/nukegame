@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nukegame/json/json_match.dart';
 import 'package:nukegame/json/json_slot.dart';
@@ -12,7 +13,7 @@ class MatchScreen extends StatelessWidget {
 
   const MatchScreen._(this.state);
 
-  factory MatchScreen.instance(DocumentReference matchDocRef) => MatchScreen._(MatchState(matchDocRef));
+  factory MatchScreen.instance(DocumentReference matchDocRef, JsonMatch match) => MatchScreen._(MatchState(matchDocRef, match));
 
   @override
   Widget build(BuildContext context) {
@@ -111,30 +112,11 @@ class BaseMap extends StatelessWidget {
           mainAxisSpacing: 0,
           crossAxisCount: 3,
           children: [
-            Container(
-              color: Colors.teal[100],
-              child: const Text("He'd have you all unravel at the"),
-            ),
-            Container(
-              color: Colors.teal[200],
-              child: const Text('Heed not the rabble'),
-            ),
-            Container(
-              color: Colors.teal[300],
-              child: const Text('Sound of screams but the'),
-            ),
-            Container(
-              color: Colors.teal[400],
-              child: const Text('Who scream'),
-            ),
-            Container(
-              color: Colors.teal[500],
-              child: const Text('Revolution is coming...'),
-            ),
-            Container(
-              color: Colors.teal[600],
-              child: const Text('Revolution, they...'),
-            ),
+            for (final JsonSlot slot in slots)
+              Container(
+                color: Colors.teal[100],
+                child: Text(slot.id),
+              ),
           ],
         ),
       ),
@@ -169,20 +151,23 @@ class CreditBanner extends StatelessWidget {
 
 class MatchState extends BaseState {
   final DocumentReference matchDocRef;
+  late final String userId;
   StreamSubscription? subscription;
   Timer? timer;
-  JsonMatch? match;
+  JsonMatch match;
   String messageBanner = '';
   int credits = 0;
 
-  MatchState(this.matchDocRef);
+  MatchState(this.matchDocRef, this.match);
 
-  List<JsonSlot> get enemySlots => [];
+  List<JsonSlot> get enemySlots => match.slots.where((e) => e.owner != userId).toList();
 
-  List<JsonSlot> get ownSlots => [];
+  List<JsonSlot> get ownSlots => match.slots.where((e) => e.owner == userId).toList();
 
   @override
   void onLoad() {
+    userId = FirebaseAuth.instance.currentUser!.uid;
+
     subscription = matchDocRef.snapshots().listen((event) {
       final Document document = Document.load(event);
       match = JsonMatch.fromDocument(document);
