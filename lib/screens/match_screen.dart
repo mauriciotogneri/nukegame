@@ -16,6 +16,7 @@ class MatchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Palette.black,
       body: StateProvider<MatchState>(
         state: state,
         builder: (context, state) => Content(state),
@@ -34,13 +35,13 @@ class Content extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => Column(
         children: [
-          const Expanded(child: Placeholder()),
+          Expanded(child: BaseMap(state)),
           Container(
             color: Palette.black,
             height: constraints.maxHeight / 10,
             child: MessageBanner(state),
           ),
-          const Expanded(child: Placeholder()),
+          Expanded(child: BaseMap(state)),
           Container(
             color: Palette.black,
             height: constraints.maxHeight / 10,
@@ -71,6 +72,55 @@ class MessageBanner extends StatelessWidget {
               color: Palette.red,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class BaseMap extends StatelessWidget {
+  final MatchState state;
+
+  const BaseMap(this.state);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Palette.black,
+      child: Center(
+        child: GridView.count(
+          primary: false,
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 0,
+          crossAxisCount: 3,
+          children: [
+            Container(
+              color: Colors.teal[100],
+              child: const Text("He'd have you all unravel at the"),
+            ),
+            Container(
+              color: Colors.teal[200],
+              child: const Text('Heed not the rabble'),
+            ),
+            Container(
+              color: Colors.teal[300],
+              child: const Text('Sound of screams but the'),
+            ),
+            Container(
+              color: Colors.teal[400],
+              child: const Text('Who scream'),
+            ),
+            Container(
+              color: Colors.teal[500],
+              child: const Text('Revolution is coming...'),
+            ),
+            Container(
+              color: Colors.teal[600],
+              child: const Text('Revolution, they...'),
+            ),
+          ],
         ),
       ),
     );
