@@ -4,7 +4,7 @@ import 'package:nukegame/types/slot_state.dart';
 
 part 'json_slot.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class JsonSlot {
   final String id;
   final String owner;

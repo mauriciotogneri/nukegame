@@ -5,7 +5,7 @@ import 'package:nukegame/models/document.dart';
 
 part 'json_match.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class JsonMatch {
   final String id;
   final List<String> players;
@@ -20,6 +20,8 @@ class JsonMatch {
   factory JsonMatch.fromDocument(Document document) => JsonMatch(
         id: document.getString('id')!,
         players: document.getList('players')!.map((e) => e.toString()).toList(),
+        // ignore: unnecessary_lambdas
+        slots: document.getList('slots')!.map((e) => JsonSlot.fromJson(e)).toList(),
       );
 
   factory JsonMatch.fromString(String json) => JsonMatch.fromJson(jsonDecode(json));

@@ -15,5 +15,5 @@ JsonMatch _$JsonMatchFromJson(Map<String, dynamic> json) => JsonMatch(
 Map<String, dynamic> _$JsonMatchToJson(JsonMatch instance) => <String, dynamic>{
       'id': instance.id,
       'players': instance.players,
-      'slots': instance.slots,
+      'slots': instance.slots.map((e) => e.toJson()).toList(),
     };
