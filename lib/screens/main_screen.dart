@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nukegame/json/json_match.dart';
+import 'package:nukegame/models/document.dart';
+import 'package:nukegame/services/navigation.dart';
 import 'package:nukegame/widgets/custom_form_field.dart';
 
 class MainScreen extends StatelessWidget {
@@ -64,6 +67,8 @@ class Content extends StatelessWidget {
 }
 
 class MainState extends BaseState {
+  DocumentReference? matchDocRef;
+  StreamSubscription? subscription;
   final TextEditingController matchIdController = TextEditingController();
 
   Future onCreateMatch() async {
@@ -74,11 +79,40 @@ class MainState extends BaseState {
         FirebaseAuth.instance.currentUser!.uid,
       ]);
 
-      FirebaseFirestore.instance.collection('matches').doc(matchId).set(match.toJson());
+      matchDocRef = _docRef(matchId);
+
+      await matchDocRef?.set(match.toJson());
+
+      subscription = matchDocRef?.snapshots().listen((event) {
+        final Document document = Document.load(event);
+        final JsonMatch match = JsonMatch.fromDocument(document);
+        _onMatchDocumentChanged(match);
+      });
     }
   }
 
+  void _onMatchDocumentChanged(JsonMatch match) {
+    if (match.players.length == 2) {
+      subscription?.cancel();
+      Navigation.matchScreen(matchDocRef!);
+    }
+  }
+
+  DocumentReference _docRef(String matchId) => FirebaseFirestore.instance.collection('matches').doc(matchId);
+
   Future onJoinMatch() async {
-    if (matchIdController.text.trim().isNotEmpty) {}
+    final String matchId = matchIdController.text.trim();
+
+    if (matchId.isNotEmpty) {
+      matchDocRef = _docRef(matchId);
+
+      final DocumentSnapshot snapshot = await matchDocRef!.get();
+      final Document document = Document.load(snapshot);
+      final JsonMatch match = JsonMatch.fromDocument(document);
+      match.players.add(FirebaseAuth.instance.currentUser!.uid);
+
+      await matchDocRef?.set(match.toJson());
+      Navigation.matchScreen(matchDocRef!);
+    }
   }
 }

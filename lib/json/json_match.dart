@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nukegame/models/document.dart';
 
 part 'json_match.g.dart';
 
@@ -12,6 +13,11 @@ class JsonMatch {
     this.id = '',
     this.players = const [],
   });
+
+  factory JsonMatch.fromDocument(Document document) => JsonMatch(
+        id: document.getString('id')!,
+        players: document.getList('players')!.map((e) => e.toString()).toList(),
+      );
 
   factory JsonMatch.fromString(String json) => JsonMatch.fromJson(jsonDecode(json));
 
