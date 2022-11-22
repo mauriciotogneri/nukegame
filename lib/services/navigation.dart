@@ -14,14 +14,14 @@ class Navigation {
 
   static BuildContext context() => get.routes.key.currentContext!;
 
-  static void lobbyScreen() => get.routes.pushReplacement(
+  static void lobbyScreen() => get.routes.pushAlone(
         FadeRoute(
           LobbyScreen.instance(),
           name: 'lobby',
         ),
       );
 
-  static void matchScreen(DocumentReference matchDocRef) => get.routes.pushReplacement(
+  static void matchScreen(DocumentReference matchDocRef) => get.routes.pushAlone(
         FadeRoute(
           MatchScreen.instance(matchDocRef),
           name: 'match',
