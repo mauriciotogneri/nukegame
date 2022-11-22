@@ -128,7 +128,7 @@ class EnemyBaseMap extends StatelessWidget {
           padding: EdgeInsets.zero,
           crossAxisSpacing: 0,
           mainAxisSpacing: 0,
-          crossAxisCount: 3,
+          crossAxisCount: slots.length ~/ 2,
           children: [
             for (final JsonSlot slot in slots) EnemySlot(slot),
           ],
@@ -158,7 +158,7 @@ class OwnBaseMap extends StatelessWidget {
           padding: EdgeInsets.zero,
           crossAxisSpacing: 0,
           mainAxisSpacing: 0,
-          crossAxisCount: 3,
+          crossAxisCount: slots.length ~/ 2,
           children: [
             for (final JsonSlot slot in slots)
               OwnSlot(
