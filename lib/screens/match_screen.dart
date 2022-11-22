@@ -38,10 +38,7 @@ class Content extends StatelessWidget {
       builder: (context, constraints) => Column(
         children: [
           Expanded(
-            child: BaseMap(
-              slots: state.enemySlots,
-              callback: null,
-            ),
+            child: EnemyBaseMap(state.enemySlots),
           ),
           Container(
             color: Palette.black,
@@ -49,7 +46,7 @@ class Content extends StatelessWidget {
             child: MessageBanner(state),
           ),
           Expanded(
-            child: BaseMap(
+            child: OwnBaseMap(
               slots: state.ownSlots,
               callback: state.onSlotSelected,
             ),
@@ -90,40 +87,6 @@ class MessageBanner extends StatelessWidget {
   }
 }
 
-class BaseMap extends StatelessWidget {
-  final List<JsonSlot> slots;
-  final Function(JsonSlot)? callback;
-
-  const BaseMap({
-    required this.slots,
-    required this.callback,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Palette.black,
-      child: Center(
-        child: GridView.count(
-          primary: false,
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 0,
-          crossAxisCount: 3,
-          children: [
-            for (final JsonSlot slot in slots)
-              Container(
-                color: Colors.teal[100],
-                child: Text(slot.id),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CreditBanner extends StatelessWidget {
   final MatchState state;
 
@@ -144,6 +107,123 @@ class CreditBanner extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class EnemyBaseMap extends StatelessWidget {
+  final List<JsonSlot> slots;
+
+  const EnemyBaseMap(this.slots);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Palette.black,
+      child: Center(
+        child: GridView.count(
+          primary: false,
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 0,
+          crossAxisCount: 3,
+          children: [
+            for (final JsonSlot slot in slots) EnemySlot(slot),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OwnBaseMap extends StatelessWidget {
+  final List<JsonSlot> slots;
+  final Function(JsonSlot) callback;
+
+  const OwnBaseMap({
+    required this.slots,
+    required this.callback,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Palette.black,
+      child: Center(
+        child: GridView.count(
+          primary: false,
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 0,
+          crossAxisCount: 3,
+          children: [
+            for (final JsonSlot slot in slots)
+              OwnSlot(
+                slot: slot,
+                callback: callback,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EnemySlot extends StatelessWidget {
+  final JsonSlot slot;
+
+  const EnemySlot(this.slot);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: slot.hidden ? Palette.hidden : Palette.empty,
+        border: Border.all(
+          width: 0.5,
+          color: Palette.black,
+        ),
+      ),
+      child: slot.hidden
+          ? const Center(
+              child: Text(
+                '?',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Palette.white,
+                ),
+              ),
+            )
+          : const Empty(),
+    );
+  }
+}
+
+class OwnSlot extends StatelessWidget {
+  final JsonSlot slot;
+  final Function(JsonSlot) callback;
+
+  const OwnSlot({
+    required this.slot,
+    required this.callback,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => callback(slot),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Palette.bySlotState(slot.state),
+          border: Border.all(
+            width: 0.5,
+            color: Palette.black,
+          ),
+        ),
+        child: const Empty(),
       ),
     );
   }
