@@ -1,4 +1,5 @@
 import 'package:dafluta/dafluta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatelessWidget {
@@ -26,8 +27,8 @@ class Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('YES!'),
+    return Center(
+      child: Text('ID: ${FirebaseAuth.instance.currentUser!.uid}'),
     );
   }
 }
