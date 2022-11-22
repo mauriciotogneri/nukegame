@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,8 @@ class SplashState extends BaseState {
       await FirebaseAuth.instance.signInAnonymously();
     }
 
-    Navigation.lobbyScreen();
+    //Navigation.lobbyScreen();
+    final doc = FirebaseFirestore.instance.collection('matches').doc('bbb');
+    Navigation.matchScreen(doc);
   }
 }
