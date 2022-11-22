@@ -105,9 +105,10 @@ class CreditBanner extends StatelessWidget {
 class MatchState extends BaseState {
   final DocumentReference matchDocRef;
   StreamSubscription? subscription;
+  Timer? timer;
   JsonMatch? match;
   String messageBanner = '';
-  int credits = 100;
+  int credits = 0;
 
   MatchState(this.matchDocRef);
 
@@ -118,10 +119,16 @@ class MatchState extends BaseState {
       match = JsonMatch.fromDocument(document);
       print(match);
     });
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      credits++;
+      notify();
+    });
   }
 
   @override
   void onDestroy() {
     subscription?.cancel();
+    timer?.cancel();
   }
 }
