@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dafluta/dafluta.dart';
 import 'package:flutter/material.dart';
+import 'package:nukegame/json/json_match.dart';
+import 'package:nukegame/models/document.dart';
 
 class MatchScreen extends StatelessWidget {
   final MatchState state;
@@ -33,6 +36,22 @@ class Content extends StatelessWidget {
 
 class MatchState extends BaseState {
   final DocumentReference matchDocRef;
+  StreamSubscription? subscription;
+  JsonMatch? match;
 
   MatchState(this.matchDocRef);
+
+  @override
+  void onLoad() {
+    subscription = matchDocRef.snapshots().listen((event) {
+      final Document document = Document.load(event);
+      match = JsonMatch.fromDocument(document);
+      print(match);
+    });
+  }
+
+  @override
+  void onDestroy() {
+    subscription?.cancel();
+  }
 }
