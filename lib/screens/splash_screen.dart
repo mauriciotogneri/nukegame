@@ -39,6 +39,6 @@ class SplashState extends BaseState {
       await FirebaseAuth.instance.signInAnonymously();
     }
 
-    Navigation.mainScreen();
+    Navigation.lobbyScreen();
   }
 }

@@ -6,30 +6,40 @@ import 'package:flutter/material.dart';
 import 'package:nukegame/json/json_match.dart';
 import 'package:nukegame/models/document.dart';
 import 'package:nukegame/services/navigation.dart';
+import 'package:nukegame/types/lobby_status.dart';
 import 'package:nukegame/widgets/custom_form_field.dart';
 
-class MainScreen extends StatelessWidget {
-  final MainState state;
+class LobbyScreen extends StatelessWidget {
+  final LobbyState state;
 
-  const MainScreen._(this.state);
+  const LobbyScreen._(this.state);
 
-  factory MainScreen.instance() => MainScreen._(MainState());
+  factory LobbyScreen.instance() => LobbyScreen._(LobbyState());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StateProvider<MainState>(
+      body: StateProvider<LobbyState>(
         state: state,
-        builder: (context, state) => Content(state),
+        builder: (context, state) {
+          switch (state.status) {
+            case LobbyStatus.form:
+              return ContentForm(state);
+            case LobbyStatus.waiting:
+              return const ContentMessage('Waiting for players…');
+            case LobbyStatus.joining:
+              return const ContentMessage('Joining match…');
+          }
+        },
       ),
     );
   }
 }
 
-class Content extends StatelessWidget {
-  final MainState state;
+class ContentForm extends StatelessWidget {
+  final LobbyState state;
 
-  const Content(this.state);
+  const ContentForm(this.state);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +76,28 @@ class Content extends StatelessWidget {
   }
 }
 
-class MainState extends BaseState {
+class ContentMessage extends StatelessWidget {
+  final String message;
+
+  const ContentMessage(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(),
+          const HBox(20),
+          Text(message),
+        ],
+      ),
+    );
+  }
+}
+
+class LobbyState extends BaseState {
+  LobbyStatus status = LobbyStatus.form;
   DocumentReference? matchDocRef;
   StreamSubscription? subscription;
   final TextEditingController matchIdController = TextEditingController();
@@ -75,6 +106,9 @@ class MainState extends BaseState {
     final String matchId = matchIdController.text.trim();
 
     if (matchId.isNotEmpty) {
+      status = LobbyStatus.waiting;
+      notify();
+
       final JsonMatch match = JsonMatch(id: matchId, players: [
         FirebaseAuth.instance.currentUser!.uid,
       ]);
@@ -104,6 +138,9 @@ class MainState extends BaseState {
     final String matchId = matchIdController.text.trim();
 
     if (matchId.isNotEmpty) {
+      status = LobbyStatus.joining;
+      notify();
+
       matchDocRef = _docRef(matchId);
 
       final DocumentSnapshot snapshot = await matchDocRef!.get();
