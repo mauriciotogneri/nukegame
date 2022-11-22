@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nukegame/services/navigation.dart';
 import 'package:nukegame/services/platform.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:nukegame/utils/empty_url_strategy.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -30,7 +31,7 @@ class Initializer {
     }
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    setPathUrlStrategy();
+    setUrlStrategy(EmptyUrlStrategy());
     getIt.registerSingleton<Navigation>(Navigation());
   }
 }
